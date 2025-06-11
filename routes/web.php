@@ -15,6 +15,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     })->name('dashboard');
    Route::get('posts', PostIndexController::class)->name('posts.index');
    Route::get('posts/create', PostsCreateController::class)->name('posts.create');
+   Route::post('posts', \App\Http\Controllers\PostsStoreController::class)->name('posts.store');
 });
 
 require __DIR__.'/settings.php';

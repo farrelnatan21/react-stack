@@ -18,7 +18,7 @@ const breadcrumbs: BreadcrumbItem[] = [
 
 type PostFormData = {
     title: string;
-    slug: string;
+
     content: string;
     image: File | null;
     file: File | null;
@@ -27,7 +27,6 @@ type PostFormData = {
 export default function PostsIndex() {
     const { data, setData, post, errors } = useForm<PostFormData>({
         title: '',
-        slug: '',
         content: '',
         image: null,
         file: null,
@@ -67,10 +66,7 @@ export default function PostsIndex() {
                     <Label htmlFor="slug" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                         Slug
                     </Label>
-                    <Input id="slug" type="text" placeholder="Enter post slug" className="mb-4 w-full" value={data.slug} onChange={(e) => setData('slug', e.target.value)} />
-                    <Label htmlFor="content" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                        Content
-                    </Label>
+
                     <Textarea id="content" placeholder="Enter post content" className="mb-4 w-full" rows={5} value={data.content} onChange={(e) => setData('content', e.target.value)}/>
                     <Label htmlFor='image' className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                         Image
@@ -82,7 +78,7 @@ export default function PostsIndex() {
                     <Input id="file" type="file" accept=".pdf,.doc,.docx" className="mb-4 w-full"  onChange={handleFileChange}/>
                     <br />
                     <div className="flex justify-end">
-                       <Button type="submit" className="bg-blue-600 text-white hover:bg-blue-700">
+                       <Button type="submit" className="bg-blue-600 text-white hover:bg-blue-700" disabled={processing}>
                             Create Post
                         </Button>
                     </div>
