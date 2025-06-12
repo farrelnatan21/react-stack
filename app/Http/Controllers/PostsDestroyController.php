@@ -2,19 +2,15 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Post;
 use Illuminate\Http\Request;
-use Inertia\Inertia;
 
-class PostIndexController extends Controller
+class PostsDestroyController extends Controller
 {
     /**
      * Handle the incoming request.
      */
     public function __invoke(Request $request)
     {
-        $post = Post::all();
-
-        return Inertia::render('posts/index', ['posts' => $post]);
+        //
     }
 }

@@ -56,13 +56,7 @@ export default function PostsIndex( {posts}: {posts: Post[]}) {
                                 <TableCell className="font-medium">{post.id}</TableCell>
                                 <TableCell>{post.title}</TableCell>
                                 <TableCell>{post.content}</TableCell>
-                                <TableCell>
-                                    {post.image ? (
-                                        <img src={post.image} alt={post.title} className="h-10 w-10 object-cover" />
-                                    ) : (
-                                        'No Image'
-                                    )}
-                                </TableCell>
+                                <img src={`/storage/${post.image}`} alt={post.title} className="h-10 w-10 object-cover rounded-md" />
                                 <TableCell className="text-right">
                                     <Link href={route('posts.edit', post.id)} className="text-blue-600 hover:underline">Edit</Link>
                                 </TableCell>

@@ -1,54 +1,68 @@
 
 import AppLayout from '@/layouts/app-layout';
-import { type BreadcrumbItem } from '@/types';
-import { Head, Link, useForm } from '@inertiajs/react';
+import { Post, type BreadcrumbItem } from '@/types';
+import { Head, Link, router, usePage } from '@inertiajs/react';
 
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
-import { FormEventHandler } from 'react';
+import { FormEventHandler, useState } from 'react';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
-        title: 'Create Post',
-        href: '/posts/create',
+        title: 'Update Post',
+        href: '/posts',
     },
 ];
 
-type PostFormData = {
-    title: string;
-    content: string;
-    image: File | null;
-    file: File | null;
-};
 
-export default function PostsCreate() {
-    const { data, setData, post, errors, processing } = useForm<PostFormData>({
-        title: '',
-        content: '',
-        image: null,
-        file: null,
-    });
+export default function PostsEdit({currentPost}: {currentPost: Post}) {
+    const [title, setTitle] = useState<string>(currentPost.title);
+    const [content, setContent] = useState<string>(currentPost.content);
+    const [image, setImage] = useState<File | null>(null);
+    const [imagePreview, setImagePreview] = useState<string | null>(null);
+    const [file, setFile] = useState<File | null>(null);
+    const { errors } = usePage().props;
+
     const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-        setData('image', file);
+        setImage(file);
+        setImagePreview(URL.createObjectURL(file));
     }
 };
 
 const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-        setData('file', file);
+        setFile(file);
     }
 };
 
 
     const submit: FormEventHandler = (e) => {
-            e.preventDefault();
-            post(route('posts.store'));
-        };
+    e.preventDefault();
+
+    const formData = new FormData();
+    formData.append('title', title);
+    formData.append('content', content);
+    if (image) {
+        formData.append('image', image);
+    }
+    if (file) {
+        formData.append('file', file);
+    }
+    formData.append('_method', 'PUT'); // penting agar dikenali sebagai PUT
+
+    router.post(route('posts.update', currentPost.id), formData, {
+        forceFormData: true, // penting agar file dikenali
+        onError: (errors) => {
+            console.log('Form error:', errors);
+        },
+    });
+};
+
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Dashboard" />
@@ -66,27 +80,35 @@ const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
                     <Label htmlFor="title" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                         Title
                     </Label>
-                    <Input id="title" type="text" placeholder="Enter post title" className="mb-4 w-full" value={data.title} onChange={(e) => setData('title', e.target.value)}/>
+                    <Input id="title" type="text" placeholder="Enter post title" className="mb-4 w-full" value={title} onChange={(e) => setTitle(e.target.value)}/>
                     {errors.title && <p className="text-red-500 text-sm">{errors.title}</p>}
                     </div>
-                    <Label htmlFor="slug" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                        Slug
+                    <Label htmlFor="content" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                        Content
                     </Label>
 
-                    <Textarea id="content" placeholder="Enter post content" className="mb-4 w-full" rows={5} value={data.content} onChange={(e) => setData('content', e.target.value)}/>
+                    <Textarea id="content" placeholder="Enter post content" className="mb-4 w-full" rows={5} value={content} onChange={(e) => setContent(e.target.value)}/>
                     {errors.content && <p className="text-red-500 text-sm">{errors.content}</p>}
                     <Label htmlFor='image' className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                         Image
                     </Label>
                     <Input id='image' type="file" onChange={handleImageChange}/>
+                    {imagePreview && (
+                        <div className="mt-2">
+                            <img src={imagePreview} alt="Image Preview" className="max-w-full h-auto rounded-md" />
+                        </div>
+                    )}
+                    {errors.image && <p className="text-red-500 text-sm">{errors.image}</p>}
+                    <br />
                     <Label htmlFor='file' className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                         File
                     </Label>
                     <Input id="file" type="file" accept=".pdf,.doc,.docx" className="mb-4 w-full"  onChange={handleFileChange}/>
+                    {errors.file && <p className="text-red-500 text-sm">{errors.file}</p>}
                     <br />
                     <div className="flex justify-end">
-                       <Button type="submit" className="bg-blue-600 text-white hover:bg-blue-700" disabled={processing}>
-                            Create Post
+                       <Button type="submit" className="bg-blue-600 text-white hover:bg-blue-700">
+                            Update Post
                         </Button>
                     </div>
 

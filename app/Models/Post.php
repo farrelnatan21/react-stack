@@ -12,14 +12,15 @@ class Post extends Model
 
     protected $fillable = [
         'title',
-        'body',
-        'user_id',
+        'content',
+        'file',
+        'created_by',
         'slug',
         'image'
     ];
 
-    public function user()
+    public function creator()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'created_by');
     }
 }

@@ -14,8 +14,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
         return Inertia::render('dashboard');
     })->name('dashboard');
    Route::get('posts', PostIndexController::class)->name('posts.index');
-   Route::get('posts/create', PostsCreateController::class)->name('posts.create');
+   Route::inertia('posts/create', PostsCreateController::class)->name('posts.create');
    Route::post('posts', \App\Http\Controllers\PostsStoreController::class)->name('posts.store');
+    Route::get('posts/{post}/edit', \App\Http\Controllers\PostsEditController::class)->name('posts.edit');
+    Route::put('posts/{post}', \App\Http\Controllers\PostsUpdateController::class)->name('posts.update');
+    Route::delete('posts/{post}', \App\Http\Controllers\PostsDestroyController::class)->name('posts.destroy');
+
 });
 
 require __DIR__.'/settings.php';
